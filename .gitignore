@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Données (trop volumineuses pour GitHub)
+data/
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Secrets
+.env

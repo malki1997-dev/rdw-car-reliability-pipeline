@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: rdw-postgres
+    environment:
+      POSTGRES_USER: rdw
+      POSTGRES_PASSWORD: rdw_pass
+      POSTGRES_DB: rdw
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
