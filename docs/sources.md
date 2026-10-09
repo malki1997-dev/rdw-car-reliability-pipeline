@@ -7,7 +7,7 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 | Dataset | ID | Lignes | Colonnes | Mise à jour | Grain (1 ligne =) | Clé |
 |---|---|---|---|---|---|---|
 | Véhicules (Gekentekende voertuigen) | m9d7-ebf2 | 16,9 M | 98 | quotidienne | 1 véhicule | kenteken |
-| Carburant (Brandstof) | 8ys7-d773 | — | 36 | quotidienne | 1 carburant d'1 véhicule | kenteken + brandstof_volgnummer |
+| Carburant (Brandstof) | 8ys7-d773 | 17,0 M | 36 | quotidienne | 1 carburant d'1 véhicule | kenteken + brandstof_volgnummer |
 | Contrôles (Meldingen keuringsinstantie) | sgfe-77wx | 24,9 M | 11 | quotidienne | 1 contrôle | kenteken + soort_erkenning + meld_datum + meld_tijd |
 | Défauts constatés (Geconstateerde gebreken) | a34c-vvps | 24,6 M | 8 | quotidienne | 1 type de défaut dans 1 contrôle | clé contrôle + gebrek_identificatie |
 | Référentiel défauts (Gebreken) | hx2c-gt7k | 1 002 | 8 | ~mensuelle | 1 code de défaut | gebrek_identificatie |
@@ -70,3 +70,21 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Colonnes _dt** : doublons typés des dates, une seule version à garder.
 - **Fréquence du pipeline** : mensuelle (besoin métier), même si la source est quotidienne.
 - **Validation** : clés vérifiées sur échantillon (scripts/check_keys.py), à revalider sur le volume complet avec Spark.
+
+## Qualité des données — constats J3
+
+- **Volume complet ingéré** : 83,5 M lignes (CSV 5,9 Go → Parquet Bronze 705 Mo, ~8× plus petit, lecture ~7× plus rapide).
+- **Clés validées sur le volume complet** : Contrôles, Défauts, Référentiel et Carburant (kenteken + volgnummer) uniques.
+- **Véhicules : 56 183 plaques en double**, dont 56 125 strictement identiques, toutes issues des pages 279 et 280.
+  Cause : dérive de la pagination par offset pendant une mise à jour de la source (suppression de lignes en amont).
+  Traitement : Bronze conservé tel quel ; dédoublonnage en Silver (version de la page la plus récente).
+  Correctif prévu : keyset pagination (kenteken > dernière valeur) au lieu de $offset.
+
+## Qualité des données — constats J3
+
+- **Volume complet ingéré** : 83,5 M lignes (CSV 5,9 Go → Parquet Bronze 705 Mo, ~8× plus petit, lecture ~7× plus rapide).
+- **Clés validées sur le volume complet** : Contrôles, Défauts, Référentiel et Carburant (kenteken + volgnummer) uniques.
+- **Véhicules : 56 183 plaques en double**, dont 56 125 strictement identiques, toutes issues des pages 279 et 280.
+  Cause : dérive de la pagination par offset pendant une mise à jour de la source (suppression de lignes en amont).
+  Traitement : Bronze conservé tel quel ; dédoublonnage en Silver (version de la page la plus récente).
+  Correctif prévu : keyset pagination (kenteken > dernière valeur) au lieu de $offset.
