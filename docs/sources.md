@@ -88,3 +88,15 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
   Cause : dérive de la pagination par offset pendant une mise à jour de la source (suppression de lignes en amont).
   Traitement : Bronze conservé tel quel ; dédoublonnage en Silver (version de la page la plus récente).
   Correctif prévu : keyset pagination (kenteken > dernière valeur) au lieu de $offset.
+
+## Couche Silver — règles de nettoyage (J4)
+
+- **Colonnes renommées** en anglais snake_case (kenteken → plate, merk → brand...).
+- **Typage** : dates yyyyMMdd → date, prix → integer, Ja/Nee → boolean. Fonctions try_ : une valeur invalide devient NULL au lieu de bloquer le pipeline (mode ANSI de Spark 4).
+- **Contrôle avant/après** : on compare les NULL de Bronze et de Silver pour détecter les conversions ratées.
+- **Véhicules** : 56 183 doublons supprimés (window function row_number, version de la page la plus récente) → 16 813 284 véhicules uniques.
+- **Modèle** : la marque est retirée du début du nom, même répétée (NISSAN QASHQAI → QASHQAI, SAAB SAAB 9-3 → 9-3). 2,3 M modèles nettoyés.
+- **catalog_price** : 38,9 % NULL dans la source ; 5 valeurs "Nee" (remorques) converties en NULL.
+- **Carburant** : 1 ligne par véhicule (15 162 676) avec fuel_type = Petrol, Diesel, Hybrid, Electric, LPG, Hydrogen, Other. Règles ordonnées (Waterstof testé avant Elektriciteit). fuel_list garde la combinaison d'origine.
+- **expiry_date** : la valeur sentinelle "0" de la source (657 069 contrôles) est convertie en NULL.
+- **Pas de filtre métier en Silver** : tous les types de véhicules sont conservés ; les filtres (ex. voitures particulières) seront appliqués en Gold.
