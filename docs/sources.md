@@ -100,3 +100,15 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Carburant** : 1 ligne par véhicule (15 162 676) avec fuel_type = Petrol, Diesel, Hybrid, Electric, LPG, Hydrogen, Other. Règles ordonnées (Waterstof testé avant Elektriciteit). fuel_list garde la combinaison d'origine.
 - **expiry_date** : la valeur sentinelle "0" de la source (657 069 contrôles) est convertie en NULL.
 - **Pas de filtre métier en Silver** : tous les types de véhicules sont conservés ; les filtres (ex. voitures particulières) seront appliqués en Gold.
+
+## Jointures et table enrichie (J5)
+
+- **Défauts × Référentiel** : broadcast join (1 002 lignes), 0 code orphelin.
+- **Contrôles × Défauts** : défauts agrégés à 1 ligne par contrôle avant le left join (pas de multiplication). 51,8 % des contrôles ont au moins un défaut.
+- **3 521 groupes de défauts sans contrôle** (0,03 %) : hypothèse du décalage de téléchargement réfutée (dates anciennes) ; 829 viennent du seul 2025-06-02 → incohérence de la source. Exclus.
+- **89 879 contrôles sans véhicule** (0,4 %) : véhicules absents du dataset Véhicules. Conservés avec marque NULL.
+- **Âges négatifs (2 769)** : installations de tachygraphes ou de GPL avant immatriculation (médiane -0,1 an). Seulement 9 APK.
+- **Le dataset Contrôles ne contient pas que des contrôles techniques** : 1,37 % sont des tachygraphes ou installations GPL. Colonne is_apk ajoutée ; Gold ne gardera que is_apk = true.
+- **Biais d'âge** : les véhicules électriques, récents, ont peu de contrôles (1er APK après ~4 ans).
+- **Plan d'exécution** : 3 SortMergeJoin, 5 shuffles ; la jointure Carburant réutilise le partitionnement par plate.
+- Table produite : data/silver/inspections_enriched (24 952 595 lignes).
