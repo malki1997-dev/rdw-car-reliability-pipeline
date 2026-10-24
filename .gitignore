@@ -18,3 +18,4 @@ dbt/dbt_packages/
 
 # Secrets
 .env
+.pytest_cache/

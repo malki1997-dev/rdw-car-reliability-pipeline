@@ -112,3 +112,13 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Biais d'âge** : les véhicules électriques, récents, ont peu de contrôles (1er APK après ~4 ans).
 - **Plan d'exécution** : 3 SortMergeJoin, 5 shuffles ; la jointure Carburant réutilise le partitionnement par plate.
 - Table produite : data/silver/inspections_enriched (24 952 595 lignes).
+
+## Industrialisation et chargement PostgreSQL (J6)
+
+- **Module rdw/transforms.py** : toutes les transformations Silver en fonctions pures (DataFrame -> DataFrame).
+- **Tests pytest** (5 tests) : valeur sentinelle, nettoyage du modèle, dédoublonnage, règles de carburant, absence de multiplication dans les jointures.
+- **Pipeline unique** spark/pipeline_silver.py lancé avec spark-submit : 6 tables Silver en ~5 min.
+- **Partitions** : AQE a réduit les 200 partitions de shuffle à 8-23 fichiers par table ; pas d'optimisation supplémentaire nécessaire à ce volume.
+- **Chargement PostgreSQL** (spark/load_postgres.py) : JDBC, coalesce(4) sans shuffle, batchs de 10 000, table par table ; secrets dans .env.
+- **Incident** : un premier essai (repartition(8), 4 Go de driver) a saturé la RAM de WSL (7,7 Go) et fait planter WSL. Corrigé par .wslconfig (10 Go + 8 Go de swap), coalesce et chargement table par table.
+- **Volumes** : 870 Mo en Parquet contre 8,1 Go dans PostgreSQL (~9×), illustration du stockage colonne vs ligne.

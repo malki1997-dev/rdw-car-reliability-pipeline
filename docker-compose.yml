@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: rdw-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: rdw
       POSTGRES_PASSWORD: rdw_pass
