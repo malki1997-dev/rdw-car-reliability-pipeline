@@ -122,3 +122,12 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Chargement PostgreSQL** (spark/load_postgres.py) : JDBC, coalesce(4) sans shuffle, batchs de 10 000, table par table ; secrets dans .env.
 - **Incident** : un premier essai (repartition(8), 4 Go de driver) a saturé la RAM de WSL (7,7 Go) et fait planter WSL. Corrigé par .wslconfig (10 Go + 8 Go de swap), coalesce et chargement table par table.
 - **Volumes** : 870 Mo en Parquet contre 8,1 Go dans PostgreSQL (~9×), illustration du stockage colonne vs ligne.
+
+## Couche Gold avec dbt (J7)
+
+- **Projet dbt** dans dbt/ ; connexion via profiles.yml avec env_var (pas de mot de passe dans le code).
+- **Sources** : 5 tables du schéma raw déclarées dans _sources.yml.
+- **Staging** (vues, schéma staging) : stg_inspections (APK uniquement, inspection_id et model_key en md5, date_key), stg_defects, stg_vehicles, stg_fuel, stg_defect_ref.
+- **Dimensions** (tables, schéma marts) : dim_model (115 570 combinaisons marque/modèle/type/carburant, surrogate key), dim_defect (1 002, clé naturelle), dim_date (calendrier 2000-2030).
+- **Faits** : fact_inspection (24 612 617 contrôles APK), fact_defect (24 564 224 défauts, inner join sur les contrôles APK).
+- **Première analyse** : Audi et BMW ont le plus faible taux de contrôles avec défaut (~42-43 %), mais la comparaison doit tenir compte de l'âge moyen (biais d'âge) et de l'entretien.

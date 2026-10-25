@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Copie des tables Silver chargées par Spark (J6)."
+    schema: raw
+    tables:
+      - name: inspections_enriched
+        description: "1 ligne par contrôle, enrichie (défauts, véhicule, carburant, âge)."
+      - name: defauts_constates
+        description: "1 ligne par type de défaut constaté lors d'un contrôle."
+      - name: vehicules
+        description: "1 ligne par véhicule (dédoublonné)."
+      - name: carburant
+        description: "1 ligne par véhicule avec son type de carburant."
+      - name: ref_defauts
+        description: "Référentiel des codes de défaut."
