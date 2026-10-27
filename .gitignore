@@ -19,3 +19,4 @@ dbt/dbt_packages/
 # Secrets
 .env
 .pytest_cache/
+dbt/.user.yml

@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: dim_model
+    description: "1 ligne par combinaison marque / modèle / type de véhicule / carburant."
+    columns:
+      - name: model_key
+        description: "Surrogate key (md5)."
+        data_tests: [unique, not_null]
+      - name: fuel_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Petrol", "Diesel", "Hybrid", "Electric", "LPG", "Hydrogen", "Other", "None"]
+
+  - name: dim_defect
+    description: "Référentiel des défauts (clé naturelle defect_code)."
+    columns:
+      - name: defect_code
+        data_tests: [unique, not_null]
+
+  - name: dim_date
+    description: "Calendrier 2000-2030."
+    columns:
+      - name: date_key
+        data_tests: [unique, not_null]
+
+  - name: dim_vehicle
+    description: "Dimension SCD2 : 1 ligne par version de véhicule (valid_from / valid_to / is_current)."
+    columns:
+      - name: vehicle_key
+        description: "Identifiant unique de la version (dbt_scd_id)."
+        data_tests: [unique, not_null]
+
+  - name: fact_inspection
+    description: "Grain : 1 ligne = 1 contrôle technique APK."
+    columns:
+      - name: inspection_id
+        data_tests: [unique, not_null]
+      - name: model_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_model')
+                field: model_key
+      - name: date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+  - name: fact_defect
+    description: "Grain : 1 ligne = 1 type de défaut dans 1 contrôle APK."
+    columns:
+      - name: inspection_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('fact_inspection')
+                field: inspection_id
+      - name: defect_code
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_defect')
+                field: defect_code

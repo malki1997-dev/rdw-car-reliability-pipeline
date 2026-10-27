@@ -1,0 +1,13 @@
+snapshots:
+  - name: snap_vehicles
+    relation: ref('stg_vehicles')
+    description: "Historique SCD2 des véhicules (une ligne par version)."
+    config:
+      schema: snapshots
+      unique_key: plate
+      strategy: check
+      check_cols:
+        - last_owner_change_date
+        - is_exported
+        - has_open_recall
+        - is_taxi

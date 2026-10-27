@@ -131,3 +131,12 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Dimensions** (tables, schéma marts) : dim_model (115 570 combinaisons marque/modèle/type/carburant, surrogate key), dim_defect (1 002, clé naturelle), dim_date (calendrier 2000-2030).
 - **Faits** : fact_inspection (24 612 617 contrôles APK), fact_defect (24 564 224 défauts, inner join sur les contrôles APK).
 - **Première analyse** : Audi et BMW ont le plus faible taux de contrôles avec défaut (~42-43 %), mais la comparaison doit tenir compte de l'âge moyen (biais d'âge) et de l'entretien.
+
+## Historique, tests et documentation dbt (J8)
+
+- **Snapshot SCD2** (snapshots/snap_vehicles.yml) : stratégie check sur propriétaire, export, rappel et taxi. 1er snapshot : 16 813 284 lignes.
+- **Simulation** d'un changement (3 véhicules passés à exportés dans raw) : dbt a fermé l'ancienne version et créé la nouvelle. Le check compare toutes les lignes (345 s) ; une stratégie timestamp serait plus rapide si la source avait une date de mise à jour.
+- **dim_vehicle** (SCD2) : vehicle_key par version, valid_from (1re version depuis 1900-01-01), valid_to (version actuelle jusqu'à 9999-12-31), is_current. Permet la jointure point-in-time.
+- **15 tests génériques** (unique, not_null, relationships, accepted_values) : tous PASS.
+- **2 tests singuliers** : cohérence des défauts (PASS) ; âge non négatif en WARN (9 anomalies connues, erreur au-delà de 100).
+- **Documentation et lineage** (dbt docs) : le graphe a révélé que stg_fuel n'est utilisé par aucun modèle aval.
