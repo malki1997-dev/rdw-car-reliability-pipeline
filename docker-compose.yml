@@ -4,13 +4,36 @@ services:
     container_name: rdw-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: rdw
-      POSTGRES_PASSWORD: rdw_pass
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: rdw
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  airflow:
+    image: rdw-airflow:3.3.1
+    container_name: rdw-airflow
+    restart: unless-stopped
+    command: standalone
+    user: "1000:0"
+    depends_on:
+      - postgres
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${PG_USER}:${PG_PASSWORD}@rdw-postgres:5432/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/rdw/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"   # local uniquement : pas de login
+      PG_HOST: rdw-postgres
+      PG_PORT: "5432"
+      PG_URL: jdbc:postgresql://rdw-postgres:5432/rdw
+    volumes:
+      - ./:/opt/rdw
+    ports:
+      - "8080:8080"
 
 volumes:
   pgdata:

@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import urllib.parse
@@ -82,6 +83,6 @@ def download(name, ingestion_date):
 
 if __name__ == "__main__":
     names = sys.argv[1:] or list(DATASETS)
-    today = date.today().isoformat()
+    today = os.environ.get("INGESTION_DATE", date.today().isoformat())
     for name in names:
         download(name, today)

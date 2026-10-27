@@ -3,8 +3,8 @@ rdw:
   outputs:
     dev:
       type: postgres
-      host: localhost
-      port: 5433
+      host: "{{ env_var('PG_HOST', 'localhost') }}"
+      port: "{{ env_var('PG_PORT', '5433') | as_number }}"
       dbname: rdw
       schema: dev
       user: "{{ env_var('PG_USER') }}"

@@ -39,6 +39,7 @@ def main(noms):
         (df.coalesce(4)                          # 4 connexions, SANS shuffle
            .write.mode("overwrite")              # idempotent : la table est recréée
            .option("batchsize", 10000)
+           .option("truncate", "true")            # vide la table sans la supprimer (vues dbt)
            .jdbc(url, f"raw.{name}", properties=props))
         print(f"[ok] raw.{name:22} {df.count():>12,} lignes en {time.time() - t0:.0f} s")
     spark.stop()
