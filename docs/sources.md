@@ -140,3 +140,15 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **15 tests génériques** (unique, not_null, relationships, accepted_values) : tous PASS.
 - **2 tests singuliers** : cohérence des défauts (PASS) ; âge non négatif en WARN (9 anomalies connues, erreur au-delà de 100).
 - **Documentation et lineage** (dbt docs) : le graphe a révélé que stg_fuel n'est utilisé par aucun modèle aval.
+
+## Orchestration avec Airflow (J9)
+
+- **Airflow 3.3.1** dans Docker (mode standalone, LocalExecutor), base de métadonnées dans la base `airflow` du PostgreSQL du projet.
+- **Image personnalisée** (airflow/Dockerfile) : Java 17, PySpark 4.2, dbt 1.12 dans un venv séparé pour éviter les conflits avec Airflow.
+- **Connexion flexible** : PG_HOST / PG_PORT en variables d'environnement (localhost:5433 depuis le PC, rdw-postgres:5432 depuis Docker).
+- **DAG rdw_pipeline** : download >> bronze >> silver >> load_postgres >> dbt_snapshot >> dbt_run >> dbt_test. schedule=@monthly (besoin métier), catchup=False, max_active_runs=1, retries=1.
+- **INGESTION_DATE** passée en paramètre de run (défaut : date logique) : relancer un mois donné reproduit les mêmes données (idempotence), et le téléchargement saute les fichiers déjà complets.
+- **load_postgres** en truncate au lieu de drop : les vues dbt dépendent des tables raw.
+- **Exécution complète** : 7 tâches en 36 minutes, tests dbt PASS.
+- **SCD2 de bout en bout** : les 3 véhicules modifiés manuellement au J8 ont bien obtenu une 3e version lors du rechargement, l'historique est intact.
+- **Incidents** : (1) run « Success » sans tâche car la date logique précédait le start_date ; (2) script de téléchargement ignorant INGESTION_DATE (modification du J3 non appliquée), détecté par un téléchargement anormalement long ; run stoppé et corrigé.
