@@ -152,3 +152,11 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Exécution complète** : 7 tâches en 36 minutes, tests dbt PASS.
 - **SCD2 de bout en bout** : les 3 véhicules modifiés manuellement au J8 ont bien obtenu une 3e version lors du rechargement, l'historique est intact.
 - **Incidents** : (1) run « Success » sans tâche car la date logique précédait le start_date ; (2) script de téléchargement ignorant INGESTION_DATE (modification du J3 non appliquée), détecté par un téléchargement anormalement long ; run stoppé et corrigé.
+
+## Tables résumées pour l'API (J10)
+
+- **agg_reliability_by_model** : 1 ligne par marque / modèle / carburant (voitures particulières, APK), seuil de 100 contrôles. 3 887 lignes, 520 Ko.
+- **agg_reliability_by_age** : même grain avec l'âge en années entières (0 à 30 ans), seuil de 50 contrôles. 16 130 lignes, 1,4 Mo.
+- **Biais d'âge démontré** : la Toyota Yaris essence affiche 52,8 % de contrôles avec défaut contre 38,7 % pour la Yaris hybride, mais l'âge moyen est de 16,8 ans contre 9,2 ans. À âge égal (8, 9 et 10 ans), les taux sont quasi identiques (39 à 41 %).
+- **Limite** : un même nom de modèle peut regrouper plusieurs générations.
+- **Moindre privilège** : l'utilisateur PostgreSQL rdw_api n'a le droit de lire que ces deux tables (grants dbt réappliqués à chaque run). Son mot de passe est dans .env, ignoré par Git.
