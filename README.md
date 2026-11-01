@@ -1,5 +1,7 @@
 # Fiabilité des véhicules aux Pays-Bas : pipeline Data Engineering
 
+[![CI](https://github.com/malki1997-dev/rdw-car-reliability-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/malki1997-dev/rdw-car-reliability-pipeline/actions/workflows/ci.yml)
+
 Pipeline de bout en bout sur les données ouvertes du RDW (l'autorité néerlandaise des véhicules) : 83,5 millions de lignes ingérées depuis l'API, nettoyées avec Spark, modélisées en étoile avec dbt dans PostgreSQL et orchestrées par Airflow. Les résultats sont exposés par une API ASP.NET Core dans un [dépôt séparé](https://github.com/malki1997-dev/rdw-api).
 
 **Question métier :** quelles marques et quels modèles ont le plus de défauts au contrôle technique (APK), et comment cela évolue-t-il avec l'âge du véhicule ?
