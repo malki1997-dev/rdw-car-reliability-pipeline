@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def check(nom, fichier, cle):
     # dtype=str : on garde les valeurs brutes, sans conversion automatique
     df = pd.read_csv(f"data/landing/{fichier}", dtype=str)

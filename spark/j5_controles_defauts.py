@@ -1,4 +1,5 @@
-from pyspark.sql import SparkSession, functions as F
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
 
 spark = (SparkSession.builder.master("local[*]").appName("j5_controles_defauts")
          .config("spark.driver.memory", "4g").getOrCreate())

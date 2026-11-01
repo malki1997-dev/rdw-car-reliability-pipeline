@@ -1,8 +1,8 @@
 """Pipeline RDW : téléchargement -> Bronze -> Silver -> PostgreSQL -> dbt."""
 from datetime import datetime, timedelta
 
-from airflow.sdk import DAG
 from airflow.providers.standard.operators.bash import BashOperator
+from airflow.sdk import DAG
 
 VENV = "/home/airflow/rdw-venv/bin"
 PROJET = "/opt/rdw"

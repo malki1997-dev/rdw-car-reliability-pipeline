@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from airflow.sdk import DAG
 from airflow.providers.standard.operators.bash import BashOperator
+from airflow.sdk import DAG
 
 with DAG(
     dag_id="hello_rdw",

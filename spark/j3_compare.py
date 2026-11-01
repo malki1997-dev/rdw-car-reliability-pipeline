@@ -1,5 +1,7 @@
 import time
-from pyspark.sql import SparkSession, functions as F
+
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
 
 spark = (SparkSession.builder.master("local[*]").appName("j3_compare")
          .config("spark.driver.memory", "4g").getOrCreate())

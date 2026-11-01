@@ -3,7 +3,8 @@
 Fonctions pures : elles reçoivent des DataFrames et renvoient des DataFrames,
 sans lire ni écrire de fichiers. On peut donc les tester avec de petites données.
 """
-from pyspark.sql import DataFrame, Window, functions as F
+from pyspark.sql import DataFrame, Window
+from pyspark.sql import functions as F
 
 CLE_CONTROLE = ["plate", "approval_type", "inspection_date", "inspection_time"]
 

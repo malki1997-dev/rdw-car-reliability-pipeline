@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - uses: actions/setup-java@v5   # Spark a besoin de Java
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Qualité du code (ruff)
+        run: ruff check .
+
+      - name: Tests (pytest)
+        run: pytest -q
+
+      - name: Validation du projet dbt (parse)
+        working-directory: dbt
+        env:
+          PG_USER: ci          # valeurs factices : parse ne se connecte pas à la base
+          PG_PASSWORD: ci
+        run: dbt parse

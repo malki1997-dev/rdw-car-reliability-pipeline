@@ -1,6 +1,7 @@
 import time
+
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.types import StringType, StructField, StructType
 
 spark = (
     SparkSession.builder

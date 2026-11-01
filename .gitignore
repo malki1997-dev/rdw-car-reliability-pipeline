@@ -20,3 +20,4 @@ dbt/dbt_packages/
 .env
 .pytest_cache/
 dbt/.user.yml
+.ruff_cache/

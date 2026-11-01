@@ -2,8 +2,10 @@ import os
 import sys
 import time
 from datetime import date
-from pyspark.sql import SparkSession, functions as F
-from pyspark.sql.types import StructType, StructField, StringType
+
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+from pyspark.sql.types import StringType, StructField, StructType
 
 COLONNES = {
     "vehicules": ["kenteken", "voertuigsoort", "merk", "handelsbenaming", "inrichting",

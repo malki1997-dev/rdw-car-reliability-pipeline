@@ -1,3 +1,4 @@
+import http.client
 import os
 import sys
 import time
@@ -39,7 +40,7 @@ def fetch(url, retries=5):
         try:
             with urllib.request.urlopen(url, timeout=120) as r:
                 return r.read()
-        except Exception as e:
+        except (OSError, http.client.HTTPException) as e:
             wait = 10 * attempt
             print(f"\n  [retry {attempt}/{retries}] {e} — nouvel essai dans {wait}s")
             time.sleep(wait)
@@ -61,7 +62,8 @@ def download(name, ingestion_date):
         part = out_dir / f"part-{page:05d}.csv"
         if part.exists():
             # Reprise : cette page a déjà été téléchargée
-            n = sum(1 for _ in open(part, "rb")) - 1
+            with open(part, "rb") as fh:
+                n = sum(1 for _ in fh) - 1
         else:
             params = {"$limit": PAGE_SIZE, "$offset": page * PAGE_SIZE, "$order": ":id"}
             if cols:
