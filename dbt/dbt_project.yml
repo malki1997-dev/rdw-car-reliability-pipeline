@@ -15,3 +15,12 @@ models:
     marts:
       +materialized: table
       +schema: marts
+
+seeds:
+  rdw:
+    +schema: marts
+    defect_family:
+      +column_types:
+        defect_code: varchar(10)
+        family: varchar(20)
+        description_fr: varchar(100)

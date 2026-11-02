@@ -1,0 +1,41 @@
+defect_code,family,description_fr
+210,entretien,Pression des pneus incorrecte
+205,entretien,Pneu avec profil insuffisant
+516,entretien,Feux de croisement mal réglés
+AC1,entretien,Pneus avec profondeur de sculpture de 1.6 à 2.5 mm
+497,entretien,Éclairage de plaque défaillant ou absent
+203,entretien,Pneu endommagé
+391,entretien,Essuie-glaces : visibilité insuffisante
+584,entretien,Feux de position défaillants
+576,entretien,Clignotants de couleur non conforme
+522,entretien,Coupure lumière-obscurité des feux de croisement floue
+556,entretien,Feu stop défaillant
+507,entretien,Feux de croisement ou de route défaillants
+475,entretien,Feu arrière défaillant
+524,entretien,Faisceau des feux de croisement incorrect
+589,entretien,Feu de gabarit ou latéral défaillant
+211,entretien,Pression des pneus inégale sur un essieu
+520,entretien,Phare au faisceau anormal mal réglé
+393,entretien,Lave-glace qui fonctionne mal
+392,entretien,Lave-glace qui ne fonctionne pas
+542,entretien,Catadioptre défectueux
+RA2,technique,Fuite excessive d'autres liquides
+AC4,technique,Rotule de direction ou de fusée usée
+AC5,technique,Pièces mécaniques du freinage usées
+115,technique,Échappement non étanche
+178,technique,Soufflet de cardan endommagé
+289,technique,Frein qui ne se libère pas
+224,technique,Ressort cassé ou fissuré
+RA1,technique,Voyant airbag ou ceintures signale un défaut
+250,technique,Soufflet de direction endommagé
+190,technique,Roulement de roue usé ou endommagé
+186,technique,Rotule de fusée avec trop de jeu
+188,technique,Soufflet de rotule de fusée endommagé
+361,technique,Écart de freinage trop grand sur un essieu
+259,technique,Rotule de direction avec trop de jeu
+311,technique,Fixation de garniture de frein touchant le tambour ou le disque
+AC2,technique,Amortisseur qui fuit
+916,technique,Conduite de frein corrodée
+312,technique,Disque de frein très corrodé
+307,technique,Flexible de frein endommagé
+RA4,technique,Voyant de pression des pneus signale un défaut

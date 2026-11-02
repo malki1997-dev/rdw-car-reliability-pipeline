@@ -1,4 +1,4 @@
-{{ config(grants={"select": ["rdw_api"]}) }}
+{{ config(grants={"select": ["rdw_api", "rdw_bi"]}) }}
 -- Grain : 1 ligne = 1 marque / modèle / carburant / âge en années entières (voitures particulières, APK)
 -- Seuil : au moins 50 contrôles par ligne pour que le taux soit interprétable.
 select

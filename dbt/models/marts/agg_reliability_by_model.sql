@@ -1,4 +1,4 @@
-{{ config(grants={"select": ["rdw_api"]}) }}
+{{ config(grants={"select": ["rdw_api", "rdw_bi"]}) }}
 -- Grain : 1 ligne = 1 combinaison marque / modèle / carburant (voitures particulières, APK)
 -- Seuil : au moins 100 contrôles, sinon le taux de défaut n'est pas fiable statistiquement.
 select
