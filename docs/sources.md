@@ -160,3 +160,13 @@ Données publiques du RDW (Pays-Bas), licence CC-0, sans clé ni inscription.
 - **Biais d'âge démontré** : la Toyota Yaris essence affiche 52,8 % de contrôles avec défaut contre 38,7 % pour la Yaris hybride, mais l'âge moyen est de 16,8 ans contre 9,2 ans. À âge égal (8, 9 et 10 ans), les taux sont quasi identiques (39 à 41 %).
 - **Limite** : un même nom de modèle peut regrouper plusieurs générations.
 - **Moindre privilège** : l'utilisateur PostgreSQL rdw_api n'a le droit de lire que ces deux tables (grants dbt réappliqués à chaque run). Son mot de passe est dans .env, ignoré par Git.
+
+## Analyse Power BI (J12)
+
+- **Classification des défauts** : seed dbt `defect_family` (40 codes : 20 entretien, 20 technique, soit 83,7 % des défauts constatés) ; les ~960 autres codes sont « non classés ». C'est un choix documenté, pas une donnée de la source.
+- **Tables dbt ajoutées** : `fact_inspection_flags` (un contrôle avec défaut : défaut hors entretien, défaut technique), `agg_brand_age` (marque × âge, avec les comptes). Utilisateur PostgreSQL `rdw_bi` en lecture seule, droits réappliqués par dbt.
+- **Périmètre** : voitures particulières, APK, marque connue, 0 à 30 ans : 20 705 584 contrôles.
+- **Résultats** : 50,5 % des contrôles avec défaut ; 28,5 % hors entretien (maximum) ; 21,5 % technique (minimum) ; 43,5 % des contrôles avec défaut n'ont que des défauts d'entretien (au moins).
+- **Standardisation par âge** (4 à 20 ans, mêmes poids pour toutes les marques) : Kia 46,8 % à 50,6 %, Toyota 48,3 % à 45,7 %, Suzuki 53,2 % à 48,8 %. L'écart entre extrêmes passe de 14,6 à 12,1 points.
+- **Intervalle de Wilson 95 %** : Toyota Auris GPL (109 contrôles) 43,1 % [34,2 ; 52,5] ; Toyota Aygo essence (432 690 contrôles) 52,8 % [52,6 ; 52,9]. L'hypothèse d'indépendance des contrôles rend l'intervalle probablement optimiste.
+- **Lecture des résultats** : un défaut n'est pas une mesure de fiabilité (entretien, usage et kilométrage non connus).

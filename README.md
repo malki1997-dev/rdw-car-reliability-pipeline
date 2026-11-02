@@ -108,6 +108,38 @@ Ouvrir http://localhost:8080 et lancer le DAG `rdw_pipeline` avec le paramètre 
 - **dbt :** unicité, non-nullité, intégrité référentielle, valeurs acceptées, et règles métier en SQL.
 - **GitHub Actions :** à chaque push, `ruff`, `pytest` et `dbt parse`. Les tests dbt sur les 24 M de lignes tournent dans Airflow, pas dans la CI.
 
+## Analyse Power BI : le piège de l'âge
+
+Tableau de bord Power BI en quatre pages, construit sur des tables résumées de la couche Gold (comptes de contrôles, pas seulement des pourcentages, pour pouvoir calculer des intervalles de confiance). Voir [le rapport en PDF](docs/powerbi/fiabilite_vehicules_rdw.pdf) et [le fichier Power BI](docs/powerbi/fiabilite_vehicules_rdw.pbix).
+
+**Périmètre :** voitures particulières, contrôles APK, marque connue, véhicules de 0 à 30 ans : 20 705 584 contrôles.
+
+| Mesure | Valeur |
+| --- | --- |
+| Contrôles avec au moins un défaut | 50,5 % |
+| Au moins un défaut hors entretien (maximum) | 28,5 % |
+| Au moins un défaut technique (minimum) | 21,5 % |
+| Part des contrôles avec défaut qui n'ont que des défauts d'entretien (au moins) | 43,5 % |
+
+**Entretien contre technique.** Les défauts les plus fréquents sont des pneus, des feux et des essuie-glaces. J'ai classé les 40 codes de défaut les plus fréquents (83,7 % des défauts constatés) en 20 d'entretien et 20 techniques, dans un fichier versionné (`dbt/seeds/defect_family.csv`). Les autres codes restent « non classés » : le taux technique est donc un minimum et le taux hors entretien un maximum. Cette classification est un choix de ma part, pas une information de la source.
+
+**Brut contre âge égal.** Le taux brut dépend de l'âge du parc. Pour le corriger, je recalcule le taux de chaque marque avec la même répartition d'âge (4 à 20 ans) pour toutes les marques. Parmi les 16 marques de plus de 500 000 contrôles :
+
+| Marque | Taux brut | Taux à âge égal |
+| --- | --- | --- |
+| Kia | 46,8 % | 50,6 % |
+| Audi | 42,2 % | 44,6 % |
+| Toyota | 48,3 % | 45,7 % |
+| Suzuki | 53,2 % | 48,8 % |
+| Fiat | 56,8 % | 53,2 % |
+| Renault | 54,3 % | 55,2 % |
+
+L'écart entre la meilleure et la pire marque passe de 14,6 à 12,1 points, mais le classement individuel change nettement : Kia, dont le parc est plus récent, paraît meilleure qu'elle n'est à âge égal.
+
+**Marge d'erreur.** Un taux calculé sur peu de contrôles n'est pas fiable. J'ai ajouté un intervalle de confiance de Wilson à 95 % : pour une Toyota Auris au GPL (109 contrôles), le taux est de 43,1 % avec un intervalle de 34,2 % à 52,5 % ; pour une Toyota Aygo à essence (432 690 contrôles), 52,8 % avec un intervalle de 52,6 % à 52,9 %. Cet intervalle suppose des contrôles indépendants, alors qu'un même véhicule est contrôlé chaque année : il est probablement trop optimiste.
+
+**Limites.** Un défaut n'est pas un indicateur de fiabilité : le kilométrage, l'usage et l'entretien ne sont pas connus. À âge égal, d'autres facteurs différencient encore les marques. Le fichier Power BI contient les données importées ; pour l'actualiser il faut la base locale et le compte en lecture seule `rdw_bi` (mot de passe dans `.env`).
+
 ## Limites
 
 - **Taux de défaut n'est pas fiabilité.** Les défauts les plus fréquents sont des pneus et des éclairages, donc de l'entretien. Le kilométrage n'est pas disponible.
